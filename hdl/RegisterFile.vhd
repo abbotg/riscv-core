@@ -17,19 +17,18 @@ architecture Behavior of RegisterFile is
         return to_integer(unsigned(i));
     end;
     signal WriteSelect, ReadSelectA, ReadSelectB: std_ulogic_vector(31 downto 0);
-    constant ZERO: std_logic_vector(31 downto 0) := X"00_00_00_00";
 begin
     x0_BufA: entity work.TriStateBuffer(Behavior)
         generic map (width => 32)
         port map (
-            A => ZERO,
+            A => (others => '0'),
             E => ReadSelectA(0),
             Q => ReadDataA
         );
     x0_BufB: entity work.TriStateBuffer(Behavior)
         generic map (width => 32)
         port map (
-            A => ZERO,
+            A => (others => '0'),
             E => ReadSelectB(0),
             Q => ReadDataB
         );
@@ -61,10 +60,6 @@ begin
             );
     end generate RegArray;
   
-    --WriteSelect <= (index(WriteAddr) => Write, others => '0');
-    --ReadSelectA <= (index(ReadAddrA) => ReadA, others => '0');
-    --ReadSelectB <= (index(ReadAddrB) => ReadB, others => '0');
-
     process (WriteAddr) begin
         WriteSelect <= (others => '0');
         WriteSelect(index(WriteAddr)) <= '1';

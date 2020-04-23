@@ -3,9 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity Semaphore is
-    generic (
-        bits: natural range 1 to 64 := 2
-    );
+    generic ( bits: natural range 1 to 64 := 2 );
     port (
         Up, Down, Clock: in  std_ulogic; -- Up and down operations
         Locked:          out std_ulogic  -- State: 1=Locked, 0=Free
