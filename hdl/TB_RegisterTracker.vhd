@@ -24,8 +24,8 @@ begin
             Reserve => Reserve,
             Free => Free,
             Stall => Stall,
-            RegAddrA => RegAddrA,
-            RegAddrB => RegAddrB,
+            ReadAddrA => ReadAddrA,
+            ReadAddrB => ReadAddrB,
             WriteAddr => WriteAddr,
             FreeAddr => FreeAddr,
             Clock => Clock
@@ -52,8 +52,6 @@ begin
             Reserve <= inReserve;
             read(L, inWriteAddr);
             WriteAddr <= inWriteAddr;
-            read(L, inReserve);
-            Reserve <= inReserve;
             read(L, inFree);
             Free <= inFree;
             read(L, inFreeAddr);

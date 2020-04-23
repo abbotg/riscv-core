@@ -2,3 +2,6 @@ hds/
 ps/
 work/
 *.bak
+*.swp
+*.un~
+*.vhd~

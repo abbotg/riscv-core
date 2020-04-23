@@ -7,15 +7,14 @@ entity Semaphore is
         bits: natural range 1 to 64 := 2
     );
     port (
-        --Op: in  std_ulogic; -- Operation select: 1=Up, 0=Down
-        Up, Down: in  std_ulogic; -- Up and down operations, can be asserted at same time (will have no effect)
-        Locked: out std_ulogic; -- State: 1=Locked, 0=Free
-        Clock: in std_ulogic
+        Up, Down, Clock: in  std_ulogic; -- Up and down operations
+        Locked:          out std_ulogic  -- State: 1=Locked, 0=Free
     );
 end entity Semaphore;
 
 architecture Behavior of Semaphore is
     constant ZERO: std_ulogic_vector(bits - 1 downto 0) := (others => '0');
+    constant ONE: std_ulogic_vector(bits - 1 downto 0) := (0 => '1', others => '0');
     signal State: std_ulogic_vector(bits - 1 downto 0) := ZERO;
 begin
     process begin
@@ -26,10 +25,5 @@ begin
             State <= std_ulogic_vector(unsigned(State) - 1);
         end if;
     end process;
-    Locked <= '0' when State = ZERO else '1';
---    process (Clock) begin
---        if rising_edge(Clock) then
---            Locked <= '0' when State = ZERO else '1';
---        end if;
---    end process;
+    Locked <= '0' when State = ZERO or (State = ONE and Up = '1' and Down = '1') else '1';
 end architecture Behavior;

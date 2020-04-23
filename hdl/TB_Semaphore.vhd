@@ -11,20 +11,20 @@ entity TB_Semaphore is
 end entity TB_Semaphore;
 
 architecture Testbench of TB_Semaphore is
-    signal Op, Enable, Locked, expLocked, Clock: std_ulogic;
+    signal Up, Down, Locked, expLocked, Clock: std_ulogic;
 
     signal vecno: natural := 0;
     file test_vectors: text open read_mode is "TB_Semaphore_vec.txt.parsed";
 begin
     DUV: entity work.Semaphore(Behavior)
         port map (
-            Op => Op,
-            Enable => Enable,
+            Up => Up,
+            Down => Down,
             Locked => Locked,
             Clock => Clock
         );
     Stimulus: process
-        variable inOp, inEnable, inLocked: std_ulogic;
+        variable inUp, inDown, inLocked: std_ulogic;
         variable L: line;
     begin
         Clock <= '0';
@@ -32,10 +32,10 @@ begin
         while not endfile(test_vectors) loop
             readline(test_vectors, L);
 
-            read(L, inEnable);
-            Enable <= inEnable;
-            read(L, inOp);
-            Op <= inOp;
+            read(L, inUp);
+            Up <= inUp;
+            read(L, inDown);
+            Down <= inDown;
             read(L, inLocked);
             expLocked <= inLocked;
 

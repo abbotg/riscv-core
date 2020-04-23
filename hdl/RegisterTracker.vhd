@@ -29,14 +29,14 @@ begin
     end generate;
     process (WriteAddr, Reserve) begin
         SemUp <= (others => '0');
-        SemUp(index(WriteAddr)) <= Reserve;
+        SemUp(index(WriteAddr)) <= Reserve; 
     end process;
     process (FreeAddr, Free) begin
         SemDown <= (others => '0');
-        SemDown(index(FreeAddr)) <= '1' when Free else '0';
+        SemDown(index(FreeAddr)) <= Free;
     end process;
     Stall <= '1' when
-           (SemLocked(index(ReadAddrA)) = '1' and ReadA = '1' and ReadAddrA /= WriteAddr)
-        or (SemLocked(index(ReadAddrB)) = '1' and ReadB = '1' and ReadAddrB /= WriteAddr)
+           (SemLocked(index(ReadAddrA)) = '1' and ReadA = '1') -- and ReadAddrA /= WriteAddr)
+        or (SemLocked(index(ReadAddrB)) = '1' and ReadB = '1') -- and ReadAddrB /= WriteAddr)
         else '0';
 end architecture Behavior;
