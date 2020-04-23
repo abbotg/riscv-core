@@ -1,0 +1,14 @@
+#
+# Lab 8, Memory Arbiter
+#
+# |-------------------- inputs ---------------------| |------------------- outputs --------------------|
+#MSAddr     FAddr       MSRead MSWrite FRead MemDelay  MemAddr     MemRead MemWrite MSMemDelay FMemDelay
+# Test idle operation
+00'00'00'AA 00'00'00'BB 0      0       0     0         00'00'00'BB 0       0        0          0   
+00'00'00'AA 00'00'00'BB 1      0       0     0         00'00'00'AA 1       0        0          1   
+00'00'00'AA 00'00'00'BB 1      0       0     1         00'00'00'AA 1       0        1          1   
+00'00'00'AA 00'00'00'BB 0      1       0     0         00'00'00'AA 0       1        0          1   
+00'00'00'AA 00'00'00'BB 1      0       1     0         00'00'00'AA 1       0        0          1   
+00'00'00'AA 00'00'00'BB 0      1       1     0         00'00'00'AA 0       1        0          1   
+00'00'00'AA 00'00'00'BB 0      1       1     1         00'00'00'AA 0       1        1          1   
+

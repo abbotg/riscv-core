@@ -1,0 +1,22 @@
+#
+# Lab 7, Execute stage/ALU
+#
+# |--------------- inputs -----------------|    |--------------- outputs ------------|
+#inFunc Type Left        Right       Extra       Address     Data        Jmp Jaddr    
+# Test positive immediate addition, JALR clears bit zero of Jaddr
+JALR-   I-   00'00'00'AA 00'00'00'BB 00'00'00'CC 00'00'00'00 00'00'00'CC 1   00'00'01'64
+# Negative and positive immediate, -1+1=0
+LW---   I-   FF'FF'FF'FF 00'00'00'01 00'00'00'00 00'00'00'00 00'00'00'00 0   00'00'00'00
+# Negative immediates, -1+-1=-2
+SW---   S-   FF'FF'FF'FF FF'FF'FF'FF 00'00'00'AA FF'FF'FF'FE 00'00'00'AA 0   00'00'00'00
+AUIPC   U-   00'00'00'00 00'00'00'00 00'00'00'AA 00'00'00'00 00'00'00'AA 0   00'00'00'00
+JAL--   UJ   00'00'00'AA 00'00'00'AA 00'00'00'BB 00'00'00'00 00'00'00'BB 1   00'00'01'54
+SLLr-   R-   00'00'00'AA 00'00'00'04 00'00'00'00 00'00'00'00 00'00'0A'A0 0   00'00'00'00
+SRAI-   I-   F0'00'00'AA 00'00'00'04 00'00'00'00 00'00'00'00 FF'00'00'0A 0   00'00'00'00
+XORI-   I-   00'00'00'AA 00'00'00'BB 00'00'00'00 00'00'00'00 00'00'00'11 0   00'00'00'00
+BEQ--   SB   00'00'00'AA 00'00'00'BB 00'00'00'CC 00'00'00'00 00'00'00'00 0   00'00'00'CC
+BGE--   SB   00'00'00'DD 00'00'00'BB 00'00'00'CC 00'00'00'00 00'00'00'00 1   00'00'00'CC
+# Testing unsigned comparison with "signed" operand
+BLTU-   SB   FF'FF'FF'FF 00'00'00'01 00'00'00'CC 00'00'00'00 00'00'00'00 0   00'00'00'CC
+SLTI-   I-   FF'FF'FF'FF 00'00'00'00 00'00'00'00 00'00'00'00 00'00'00'01 0   00'00'00'00
+

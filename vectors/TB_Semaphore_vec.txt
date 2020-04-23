@@ -1,0 +1,19 @@
+#
+# Lab 9: Counting Semaphore
+#
+#|--inputs--| |--outputs--|
+#Enable Op      Locked
+
+# Disabled, Op=down, Locked=false
+0       0       0
+# Enabled, Op=down, Locked=false
+1       0       0
+# Enabled, Op=up, Locked=true
+1       1       1
+# Enabled, Op=up, Locked=true
+1       1       1
+# Enabled, Op=down, Locked=true
+1       0       1
+# Enabled, Op=down, Locked=false
+1       0       0
+

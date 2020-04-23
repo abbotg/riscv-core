@@ -1,0 +1,39 @@
+#
+# Test file for Lab 4
+#
+# |------------------Inputs--------------|  |-------------Outputs----------|
+Jaddr       Mdata       Jmp Reset Delay       Address     Inst        read
+
+# Initialize
+00_00_00_CC 00_00_00_BB 0   1     0           00_00_00_00 00_00_00_13 0  
+
+# Test Reset without Delay
+00_00_00_CC 00_00_00_BB 0   1     0           00_00_00_00 00_00_00_13 0
+
+# Test Reset with Delay
+00_00_00_CC 00_00_00_BB 0   1     1           00_00_00_00 00_00_00_13 0
+
+# Jmp + Delay
+00_00_00_CC 00_00_00_BB 1   0     1           00_00_00_CC 00_00_00_13 0
+
+# All three
+00_00_00_CC 00_00_00_BB 1   1     1           00_00_00_00 00_00_00_13 0
+
+# Test Jmp w/o Delay
+00_00_00_CC 00_00_00_BB 1   0     0           00_00_00_CC 00_00_00_13 0
+
+# Test Jmp w/ Delay
+00_00_00_CC 00_00_00_BB 1   0     0           00_00_00_CC 00_00_00_13 0
+
+# Test normal program sequencing w/o Delay
+# Also test Address on word boundary
+00_00_00_CC 00_00_00_BB 0   0     0           00_00_00_D0 00_00_00_BB 1
+
+# Test normal program sequencing w/ Delay
+# Also test Address does not change when Delay and read are asserted
+00_00_00_CC 00_00_00_BB 0   0     1           00_00_00_D0 00_00_00_13 1
+
+# Confirm Valid instruction on Inst output
+# Also test Address on word boundary
+00_00_00_CC 00_00_00_BB 0   0     0           00_00_00_D4 00_00_00_BB 1
+

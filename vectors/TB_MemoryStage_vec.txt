@@ -1,0 +1,19 @@
+#
+# Lab 8, Memory Stage
+#
+# |------------------ inputs ----------| |--------------- outputs --------------------------|
+#FuncIn DataIn      AddrIn      MemDelay  MemAddr     MemDataOut  MemRead MemWrite DataOut
+# Test instruction not accessing memory
+AUIPC   00'00'00'AA 00'00'00'BB 0         00'00'00'00 00'00'00'00 0       0        00'00'00'00 
+# Test loads w,w/o delay
+LW---   00'00'00'AA 00'00'00'BB 0         00'00'00'BB 00'00'00'00 1       0        00'00'00'CC 
+LB---   00'00'00'AA 00'00'00'BB 1         00'00'00'BB 00'00'00'00 1       0        00'00'00'00 
+# Test stores w,w/o delay
+SW---   00'00'00'AA 00'00'00'BB 0         00'00'00'BB 00'00'00'AA 0       1        00'00'00'00 
+SB---   00'00'00'AA 00'00'00'BB 1         00'00'00'BB 00'00'00'AA 0       1        00'00'00'00 
+# Test extended MemDelay
+LW---   00'00'00'AA 00'00'00'BB 0         00'00'00'BB 00'00'00'00 1       0        00'00'00'CC 
+LH---   00'00'00'AA 00'00'00'BB 1         00'00'00'BB 00'00'00'00 1       0        00'00'00'00 
+AUIPC   00'00'00'AA 00'00'00'BB 1         00'00'00'BB 00'00'00'00 1       0        00'00'00'00 
+AUIPC   00'00'00'AA 00'00'00'BB 1         00'00'00'BB 00'00'00'00 1       0        00'00'00'00 
+

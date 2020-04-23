@@ -1,0 +1,9 @@
+#
+# Lab 8, Write Back stage
+#
+# |--- inputs ---| |-- outputs --|
+#FuncIn DestRegIn   Write
+LW---   00010       1
+LW---   00000       0
+ADDr-   00011       1
+ADDr-   00000       0
