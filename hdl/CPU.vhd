@@ -8,8 +8,8 @@ entity CPU is
         MemDataIn:           in  word_t;
         MemRead, MemWrite:   out std_ulogic;
         MemDelay:            in  std_ulogic;
-        MemDataOut, MemAddr: out word_t   
-        Clock:               in  std_ulogic;
+        MemDataOut, MemAddr: out word_t;
+        Clock:               in  std_ulogic
     );
 end entity CPU;
 
@@ -32,7 +32,7 @@ architecture Structure of CPU is
     -- From Decode
     signal d2e_Func: RV32I_Op;
     signal d2e_Left, d2e_Right, d2e_Extra: word_t;
-    signal d_DestReg, d_RegAddrA, d_RegAddrB: regaddr_t; -- to both RF and RT
+    signal d2e_DestReg, d_RegAddrA, d_RegAddrB, d2rt_RTWriteAddr: regaddr_t; -- to both RF and RT
     signal d2rt_RS1v, d2rt_RS2v, d2rt_RDv: std_ulogic;
     signal d2e_InstructionType: InsType;
 
@@ -40,6 +40,7 @@ architecture Structure of CPU is
     signal e2f_Jaddr, e2ms_Address, e2ms_Data: word_t;
     signal e2ms_DestReg: regaddr_t;
     signal e2f_Jump: std_ulogic;
+    signal e2ms_Func: RV32I_Op;
 
     -- From Memory Stage
     signal ms2wb_Func: RV32I_Op;
@@ -86,17 +87,18 @@ begin
             Left => d2e_Left,
             Right => d2e_Right,
             Extra => d2e_Extra,
-            DestReg => d_DestReg,
+            DestReg => d2e_DestReg,
             RS1v => d2rt_RS1v,
             RS2v => d2rt_RS2v,
             RDv => d2rt_RDv,
+            RTWriteAddr => d2rt_RTWriteAddr,
             Stall1 => ms_Stall,
             Stall2 => rt_Stall,
             InstructionType => d2e_InstructionType,
             RegAddrA => d_RegAddrA,
             RegAddrB => d_RegAddrB,
-            RegDataA => rf2d_RegDataA,
-            RegDataB => rf2d_RegDataB,
+            RegDataA => rf2d_ReadDataA,
+            RegDataB => rf2d_ReadDataB,
             Clock => Clock
         );
     ExecuteStage: entity work.Execute(Behavior)
@@ -106,7 +108,7 @@ begin
             Left => d2e_Left,
             Right => d2e_Right,
             Extra => d2e_Extra,
-            DestRegIn => d_DestReg,
+            DestRegIn => d2e_DestReg,
             Jaddr => e2f_Jaddr,
             Jump => e2f_Jump,
             Address => e2ms_Address,
@@ -141,7 +143,7 @@ begin
             Func => ms2wb_Func,
             DataOut => wb2rf_Data,
             DestRegOut => wb_DestReg,
-            Write => wb2rf_Write,
+            Write => wb_Write,
             Clock => Clock
         );
     MemoryArbiter: entity work.MemoryArbiter(Behavior)
@@ -151,7 +153,7 @@ begin
             MSRead => ms2ma_MemRead,
             MSWrite => ms2ma_MemWrite,
             MSMemDelay => ma2ms_MemDelay,
-            MSDataOut => ma2f_MemDelay,
+            MSDataOut => ma2ms_Data,
             FAddr => f2ma_Address,
             FRead => f2ma_read,
             FMemDelay => ma2f_MemDelay,
@@ -165,9 +167,9 @@ begin
         );
     RegisterTracker: entity work.RegisterTracker(Behavior)
         port map (
-            ReadAddrA => d_ReadAddrA,
-            ReadAddrB => d_ReadAddrB,
-            WriteAddr => d_DestReg,
+            ReadAddrA => d_RegAddrA,
+            ReadAddrB => d_RegAddrB,
+            WriteAddr => d2rt_RTWriteAddr,
             FreeAddr => wb_DestReg,
             Stall => rt_Stall,
             Clock => Clock,

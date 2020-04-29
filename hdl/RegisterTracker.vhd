@@ -12,7 +12,7 @@ entity RegisterTracker is
 end entity RegisterTracker;
 
 architecture Behavior of RegisterTracker is
-    signal SemUp, SemDown, SemLocked: std_ulogic_vector(31 downto 0) := (others => '0');
+    signal SemUp, SemDown, SemLocked, SemIsZero: std_ulogic_vector(31 downto 0) := (others => '0');
     function index(i: std_ulogic_vector) return integer is begin
         return to_integer(unsigned(i));
     end;
@@ -25,12 +25,14 @@ begin
                 Up => SemUp(i),
                 Down => SemDown(i),
                 Locked => SemLocked(i),
+                IsZero => SemIsZero(i),
                 Clock => Clock
             );
     end generate;
-    process (WriteAddr, Reserve) begin
+    process (WriteAddr, Reserve, SemIsZero, ReadAddrA) begin
         SemUp <= (others => '0');
-        SemUp(index(WriteAddr)) <= Reserve; 
+        SemUp(index(WriteAddr)) <= Reserve when SemIsZero(index(ReadAddrA)) = '1'
+                                            and SemIsZero(index(ReadAddrA)) = '1';
     end process;
     process (FreeAddr, Free) begin
         SemDown <= (others => '0');

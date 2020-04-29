@@ -10,9 +10,11 @@ entity DecodeStage is
         Func:               out RV32I_Op;
         Left, Right, Extra: out word_t;
         DestReg:            out regaddr_t;   -- dest reg address
-        RS1v, RS2v, RDv:    out std_ulogic; -- to register tracker
         Stall1, Stall2:     in  std_ulogic; -- stalls from reg tracker or memory stage
         InstructionType:    out InsType;
+        -- Register tracker --
+        RS1v, RS2v, RDv:    out std_ulogic; -- readA, readB, and reserve control lines
+        RTWriteAddr:        out regaddr_t;
         -- Register file i/o
         RegAddrA, RegAddrB: out regaddr_t;   -- Reg A, B addresses
         RegDataA, RegDataB: in  word_t;   -- Reg A, B data
@@ -26,7 +28,7 @@ architecture Behavior of DecodeStage is
     signal Stall: std_ulogic;
     signal iFunc: RV32I_Op;
     signal iDestReg: regaddr_t;
-    signal iRDv: std_ulogic;
+    --signal iRDv: std_ulogic;
     constant FOUR: word_t := X"00_00_00_04";
 begin
     InstructionBuffer: entity work.Reg(Behavior)
@@ -56,7 +58,7 @@ begin
             RD   => iDestReg,
             RS1v => RS1v,
             RS2v => RS2v,
-            RDv  => iRDv,
+            RDv  => RDv,
             Immediate => Immediate,
             InstructionType => InstructionType
         );
@@ -70,9 +72,11 @@ process (all)
 begin
     -- Assign RegDataA, RegDataB, Immediate to outputs Left, Right, and Extra
     -- Also do math for branches, jumps, and AUIPC
+    RTWriteAddr <= iDestReg;
+    
     if Stall then
         Func    <= NOP; -- Send NOP down pipeline 
-        RDv     <= '0'; -- De-asserted on stall so that the reg tracker increments the semaphore only once
+        --RDv     <= '0'; -- De-asserted on stall so that the reg tracker increments the semaphore only once
         DestReg <= (others => '0'); -- Simulate a NOP
         Left    <= (others => '0');
         Right   <= (others => '0');
@@ -80,7 +84,7 @@ begin
         -- RS1v, RS2v remain asserted so that the reg tracker will continue to stall until freed
     else
         Func    <= iFunc; -- Forward normal intermediate values from decoder
-        RDv     <= iRDv;
+        --RDv     <= iRDv;
         DestReg <= iDestReg;
         case InstructionType is
             when R =>  -- ALU

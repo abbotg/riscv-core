@@ -81,7 +81,7 @@ package RV32I is
     constant ZERO32: word_t := (others => '0');
     constant ZERO_32: word_t := ZERO32;
     constant ZERO5: regaddr_t := (others => '0');
-    constant ZERO_5: word_t := ZERO5;
+    constant ZERO_5: regaddr_t := ZERO5;
     constant NOP_inst: word_t := "00000000000000000000000000010011";
 
     function opcode_of(instr: word_t) return std_ulogic_vector;
