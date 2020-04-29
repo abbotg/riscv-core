@@ -6,8 +6,8 @@ use work.RV32I.all;
 entity RegisterFile is
     port (
         ReadDataA, ReadDataB: out std_logic_vector(31 downto 0);
-        WriteData: in std_ulogic_vector(31 downto 0);
-        ReadAddrA, ReadAddrB, WriteAddr: in std_ulogic_vector(4 downto 0);
+        WriteData: in word_t;
+        ReadAddrA, ReadAddrB, WriteAddr: in regaddr_t;
         Write, Clock: in std_ulogic
     );
 end entity RegisterFile;
@@ -16,7 +16,7 @@ architecture Behavior of RegisterFile is
     function index(i: std_ulogic_vector) return integer is begin
         return to_integer(unsigned(i));
     end;
-    signal WriteSelect, ReadSelectA, ReadSelectB: std_ulogic_vector(31 downto 0);
+    signal WriteSelect, ReadSelectA, ReadSelectB: word_t;
 begin
     x0_BufA: entity work.TriStateBuffer(Behavior)
         generic map (width => 32)
