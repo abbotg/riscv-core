@@ -8,7 +8,7 @@ entity Fetch is
         Jaddr, Mdata:             in  word_t;
         Address, Inst, PC:        out word_t; 
         Clock, Jmp, Reset,
-        StallMem, StallPipeline:  in  std_ulogic;
+        Stall1, Stall2, Stall3:   in  std_ulogic;
         read:                     out std_ulogic
     );
 end entity Fetch;
@@ -45,7 +45,7 @@ begin
             Sel => Reset or Delay or Jmp
         );
     Read <= Reset nor Jmp;
-    Delay <= StallMem or StallPipeline;
+    Delay <= Stall1 or Stall2 or Stall3;
 end architecture Structure;
 
 
