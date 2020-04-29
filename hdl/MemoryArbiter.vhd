@@ -6,20 +6,20 @@ use work.RV32I.all;
 entity MemoryArbiter is
     port (
         -- Memory stage --
-        MSDataIn, MSAddr:    in  std_ulogic_vector(31 downto 0);
+        MSDataIn, MSAddr:    in  word_t;
         MSRead, MSWrite:     in  std_ulogic;
         MSMemDelay:          out std_ulogic;
-        MSDataOut:           out std_ulogic_vector(31 downto 0);
+        MSDataOut:           out word_t;
         -- Fetch stage --
-        FAddr:               in  std_ulogic_vector(31 downto 0);
+        FAddr:               in  word_t;
         FRead:               in  std_ulogic;
         FMemDelay:           out std_ulogic;
-        FDataOut:            out std_ulogic_vector(31 downto 0);
+        FDataOut:            out word_t;
         -- Memory system --
-        MemDataIn:           in  std_ulogic_vector(31 downto 0);
+        MemDataIn:           in  word_t;
         MemRead, MemWrite:   out std_ulogic;
         MemDelay:            in  std_ulogic;
-        MemDataOut, MemAddr: out std_ulogic_vector(31 downto 0)
+        MemDataOut, MemAddr: out word_t
     );
 end entity MemoryArbiter;
 

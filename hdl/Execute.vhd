@@ -6,31 +6,27 @@ use work.RV32I.all;
 entity Execute is
     port (
         -- From Decode stage --
-        inFunc:                   in  RV32I_Op;
+        FuncIn:                   in  RV32I_Op;
         InstructionType:          in  InsType;
-        Left, Right, Extra:       in  std_ulogic_vector(31 downto 0);
-        inDestReg:                in  std_ulogic_vector(4 downto 0);
-        inRS1v, inRS2v, inRDv:    in  std_ulogic;
+        Left, Right, Extra:       in  word_t;
+        DestRegIn:                in  regaddr_t;
         -- To Fetch stage --
-        Jaddr:                    out std_ulogic_vector(31 downto 0);
+        Jaddr:                    out word_t;
         Jump:                     out std_ulogic;
         -- To Memory stage --
-        Address, Data:            out std_ulogic_vector(31 downto 0);
-        outDestReg:               out std_ulogic_vector(4 downto 0);
-        outFunc:                  out RV32I_Op;
-        outRS1v, outRS2v, outRDv: out std_ulogic;
+        Address, Data:            out word_t;
+        DestRegOut:               out regaddr_t;
+        FuncOut:                  out RV32I_Op;
         -- Global i/o --
         Clock, Stall:             in  std_ulogic
     );
 end entity Execute;
 
 architecture Behavior of Execute is
-    signal bLeft, bRight, bExtra, ALUResult: std_ulogic_vector(31 downto 0);
+    signal bLeft, bRight, bExtra, ALUResult: word_t;
     signal bFunc: RV32I_Op;
     signal bInstructionType: InsType;
-    signal bDestReg: std_ulogic_vector(4 downto 0);
-    constant ZERO: std_ulogic_vector(31 downto 0) := (others => '0');
-    constant UNKNOWN32: std_ulogic_vector(31 downto 0) := (others => 'X');
+    signal bDestReg: regaddr_t;
 begin
     LeftBuffer: entity work.Reg(Behavior)
         generic map (width => 32)
@@ -62,7 +58,7 @@ begin
     DestRegBuffer: entity work.Reg(Behavior)
         generic map (width => 5)
         port map (
-            D      => inDestReg,
+            D      => DestRegIn,
             Q      => bDestReg,
             Enable => not Stall,
             Reset  => '0',
@@ -70,7 +66,7 @@ begin
         );
     FuncBuffer: entity work.FuncReg(Behavior)
         port map (
-            D      => inFunc,
+            D      => FuncIn,
             Q      => bFunc,
             Enable => not Stall,
             Reset  => '0',
@@ -92,11 +88,8 @@ begin
             ALUResult => ALUResult
         );
 process (all) begin
-    outDestReg <= bDestReg;
-    outFunc <= bFunc;
-    outRS1v <= inRS1v;
-    outRS2v <= inRS2v;
-    outRDv <= inRDv;
+    DestRegOut <= bDestReg;
+    FuncOut <= bFunc;
 
     -- Default assignments (may be overwritten below) --
     Jump <= '0'; -- only set for JALR, JAL, and B-type functions

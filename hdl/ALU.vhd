@@ -6,18 +6,17 @@ use work.RV32I.all;
 entity ALU is
     port (
         Func: in RV32I_Op;
-        Left, Right: in std_ulogic_vector(31 downto 0);
-        ALUResult: out std_ulogic_vector(31 downto 0)
+        Left, Right: in word_t;
+        ALUResult: out word_t
     );
 end entity ALU;
 
 architecture Behavior of ALU is
-constant ONE: std_ulogic_vector(31 downto 0) := X"00_00_00_01";
-constant ZERO: std_ulogic_vector(31 downto 0) := (others => '0');
+constant ONE: word_t := X"00_00_00_01";
 begin
 
 process (Func, Left, Right)
-variable tmp: std_ulogic_vector(31 downto 0);
+variable tmp: word_t;
 begin
 case Func is
     when JALR =>
@@ -31,17 +30,17 @@ case Func is
     when SUBr =>
         ALUResult <= std_ulogic_vector(signed(Left) - signed(Right));
     when BEQ =>
-        ALUResult <= ONE when signed(Left) = signed(Right) else ZERO;
+        ALUResult <= ONE when signed(Left) = signed(Right) else ZERO32;
     when BNE =>
-        ALUResult <= ONE when signed(Left) /= signed(Right) else ZERO;
+        ALUResult <= ONE when signed(Left) /= signed(Right) else ZERO32;
     when BGE =>
-        ALUResult <= ONE when signed(Left) >= signed(Right) else ZERO;
+        ALUResult <= ONE when signed(Left) >= signed(Right) else ZERO32;
     when BGEU =>
-        ALUResult <= ONE when unsigned(Left) >= unsigned(Right) else ZERO;
+        ALUResult <= ONE when unsigned(Left) >= unsigned(Right) else ZERO32;
     when BLT | SLTI | SLTr =>
-        ALUResult <= ONE when signed(Left) < signed(Right) else ZERO;
+        ALUResult <= ONE when signed(Left) < signed(Right) else ZERO32;
     when BLTU | SLTIU | SLTUr =>
-        ALUResult <= ONE when unsigned(Left) < unsigned(Right) else ZERO;
+        ALUResult <= ONE when unsigned(Left) < unsigned(Right) else ZERO32;
     when XORI | XORr =>
         ALUResult <= Left xor Right;
     when ORI | ORr =>
@@ -54,8 +53,8 @@ case Func is
         ALUResult <= Left srl to_integer(unsigned(Right));
     when SRAI | SRAr =>
         ALUResult <= std_ulogic_vector(signed(Left) sra to_integer(unsigned(Right)));
-    when AUIPC | LUI =>
-        ALUResult <= ZERO;
+    when AUIPC | LUI | NOP =>
+        ALUResult <= ZERO32;
     when others =>
         ALUResult <= X"XX_XX_XX_XX";
 end case;

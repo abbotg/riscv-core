@@ -14,16 +14,11 @@ entity Mux2 is
 end entity Mux2;
 
 architecture Behavior of Mux2 is
-    constant x: std_ulogic_vector(width - 1 downto 0) := (others => 'X');
 begin
-    process (In0, In1, Sel)
-    begin
-        if Sel = '0' then
-            Q <= In0;
-        elsif Sel = '1' then
-            Q <= In1;
-        else
-            Q <= x;
-        end if;
-    end process;
+
+with Sel select Q <=
+    In0 when '0',
+    In1 when '1',
+    (others => 'X') when others;
+
 end architecture Behavior;

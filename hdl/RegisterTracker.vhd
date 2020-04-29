@@ -1,10 +1,11 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use work.RV32I.all;
 
 entity RegisterTracker is
     port (
-        ReadAddrA, ReadAddrB, WriteAddr, FreeAddr: in std_ulogic_vector(4 downto 0);
+        ReadAddrA, ReadAddrB, WriteAddr, FreeAddr: in regaddr_t;
         Stall: out std_ulogic;
         Clock, ReadA, ReadB, Reserve, Free: in std_ulogic
     );
@@ -35,8 +36,6 @@ begin
         SemDown <= (others => '0');
         SemDown(index(FreeAddr)) <= Free;
     end process;
-    Stall <= '1' when
-           (SemLocked(index(ReadAddrA)) = '1' and ReadA = '1') -- and ReadAddrA /= WriteAddr)
-        or (SemLocked(index(ReadAddrB)) = '1' and ReadB = '1') -- and ReadAddrB /= WriteAddr)
-        else '0';
+    Stall <= (SemLocked(index(ReadAddrA)) and ReadA) or
+             (SemLocked(index(ReadAddrB)) and ReadB);
 end architecture Behavior;

@@ -6,12 +6,12 @@ use work.RV32I.all;
 entity WriteBackStage is
     port (
         -- From Memory stage --
-        DataIn:     in  std_ulogic_vector(31 downto 0);
-        DestRegIn:  in  std_ulogic_vector(4 downto 0);
+        DataIn:     in  word_t;
+        DestRegIn:  in  regaddr_t;
         Func:       in  RV32I_Op;
         -- To register file --
-        DataOut:    out std_ulogic_vector(31 downto 0);
-        DestRegOut: out std_ulogic_vector(4 downto 0);
+        DataOut:    out word_t;
+        DestRegOut: out regaddr_t;
         Write:      out std_ulogic;
         -- Pipeline I/O --
         Clock:      in  std_ulogic
@@ -19,10 +19,9 @@ entity WriteBackStage is
 end entity WriteBackStage;
 
 architecture Behavior of WriteBackStage is
-    signal bData:     std_ulogic_vector(31 downto 0);
-    signal bDestReg:  std_ulogic_vector(4 downto 0);
+    signal bData:     word_t;
+    signal bDestReg:  regaddr_t;
     signal bFunc:     RV32I_Op;
-    constant ZERO_5b: std_ulogic_vector(4 downto 0) := (others => '0');
 begin
     DataInBuffer: entity work.Reg(Behavior)
         generic map (width => 32)
@@ -51,7 +50,9 @@ begin
             Clock  => Clock 
         );
     
-    Write <= '0' when bFunc = NOP or bDestReg = ZERO_5b else '1'; -- writing to x0 always ignored
+    Write <= '0' when bFunc = NOP or bDestReg = ZERO5 else '1'; 
+        -- writing to x0 always ignored
+        -- NOP generated in decode stage on reg tracker delay or in mem stage from memdelay
     DataOut <= bData;
     DestRegOut <= bDestReg;
 

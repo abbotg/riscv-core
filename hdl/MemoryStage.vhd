@@ -6,17 +6,17 @@ use work.RV32I.all;
 entity MemoryStage is
     port (
         -- From Execute stage --
-        DataIn, AddrIn:         in  std_ulogic_vector(31 downto 0);
-        DestRegIn:              in  std_ulogic_vector(4 downto 0);
+        DataIn, AddrIn:         in  word_t;
+        DestRegIn:              in  regaddr_t;
         FuncIn:                 in  RV32I_Op;
         -- Memory interface --
-        MemDataOut, MemAddr:    out std_ulogic_vector(31 downto 0);
+        MemDataOut, MemAddr:    out word_t;
         MemRead, MemWrite:      out std_ulogic;
-        MemDataIn:              in  std_ulogic_vector(31 downto 0);
+        MemDataIn:              in  word_t;
         MemDelay:               in  std_ulogic;
         -- To Write Back stage --
-        DataOut:                out std_ulogic_vector(31 downto 0);
-        DestRegOut:             out std_ulogic_vector(4 downto 0);
+        DataOut:                out word_t;
+        DestRegOut:             out regaddr_t;
         FuncOut:                out RV32I_Op;
         -- Pipeline I/O --
         Stall:                  out std_ulogic;
@@ -25,25 +25,9 @@ entity MemoryStage is
 end entity MemoryStage;
 
 architecture Behavior of MemoryStage is
-    signal bData, bAddr: std_ulogic_vector(31 downto 0);
-    signal bDestReg:     std_ulogic_vector(4 downto 0);
+    signal bData, bAddr: word_t;
+    signal bDestReg:     regaddr_t;
     signal bFunc:        RV32I_Op;
-    function is_load(f: RV32I_Op) return boolean is begin
-        case f is
-            when LB | LH | LW | LBU | LHU =>
-                return true;
-            when others =>
-                return false;
-        end case;
-    end function;
-    function is_store(f: RV32I_Op) return boolean is begin
-        case f is
-            when SB | SH | SW =>
-                return true;
-            when others =>
-                return false;
-        end case;
-    end function;
 begin
     DataInBuffer: entity work.Reg(Behavior)
         generic map (width => 32)
