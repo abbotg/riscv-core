@@ -8,7 +8,7 @@ entity Reg is
     );
     port (
         D: in std_ulogic_vector(width - 1 downto 0);
-        Q: out std_ulogic_vector(width - 1 downto 0);
+        Q: out std_ulogic_vector(width - 1 downto 0) := (others => '0');
         Clock, Enable, Reset: in std_ulogic
     );
 end entity Reg;

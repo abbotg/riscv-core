@@ -97,7 +97,7 @@ process (all) begin
     Address <= (others => '0'); -- only set for loads/stores
     Data <= (others => '0'); -- set by all except loads and branches
 
-    case bInstructionType is
+    if bFunc /= NOP then case bInstructionType is
         when R =>  -- ALU
             Data <= ALUResult;
         when I =>  -- Loads, ALU immediates, JALR
@@ -125,6 +125,7 @@ process (all) begin
             Jaddr <= ALUResult;
         when others =>
     end case;
+    end if;
 end process;
 end architecture Behavior;
 

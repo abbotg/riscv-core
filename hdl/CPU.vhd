@@ -39,7 +39,7 @@ architecture Structure of CPU is
     -- From Execute
     signal e2f_Jaddr, e2ms_Address, e2ms_Data: word_t;
     signal e2ms_DestReg: regaddr_t;
-    signal e2f_Jump: std_ulogic;
+    signal e_Jump: std_ulogic;
     signal e2ms_Func: RV32I_Op;
 
     -- From Memory Stage
@@ -72,7 +72,7 @@ begin
             Inst    => f2d_Instruction,
             PC      => f2d_PC,
             Clock   => Clock,
-            Jmp     => e2f_Jump,
+            Jmp     => e_Jump,
             Reset   => '0',
             Stall1  => ma2f_MemDelay,
             Stall2  => ms_Stall,
@@ -94,6 +94,7 @@ begin
             RTWriteAddr => d2rt_RTWriteAddr,
             Stall1 => ms_Stall,
             Stall2 => rt_Stall,
+            Jump => e_Jump,
             InstructionType => d2e_InstructionType,
             RegAddrA => d_RegAddrA,
             RegAddrB => d_RegAddrB,
@@ -110,7 +111,7 @@ begin
             Extra => d2e_Extra,
             DestRegIn => d2e_DestReg,
             Jaddr => e2f_Jaddr,
-            Jump => e2f_Jump,
+            Jump => e_Jump,
             Address => e2ms_Address,
             Data => e2ms_Data,
             DestRegOut => e2ms_DestReg,

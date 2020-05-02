@@ -46,6 +46,7 @@ begin
         );
     Read <= Reset nor Jmp;
     Delay <= Stall1 or Stall2 or Stall3;
+    PC <= Address;
 end architecture Structure;
 
 

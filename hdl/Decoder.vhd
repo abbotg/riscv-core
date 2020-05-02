@@ -45,7 +45,19 @@ process (all)
         return ret;
     end;
 begin
-    case opcode_of(instruction) is
+    if instruction(1 downto 0) /= "11" then
+        -- zero instruction, as if CPU just reset
+        -- simulate NOP: ADDI x0,x0,0
+        InstructionType <= I;
+        Func <= ADDI;
+        RS1 <= ZERO_5;
+        RS2 <= ZERO_5;
+        RD <= ZERO_5;
+        RS1v <= '1';
+        RS2v <= '0';
+        RDv <= '1';
+        Immediate <= ZERO_32;
+    else case opcode_of(instruction) is
         when RV32I_OP_LUI | RV32I_OP_AUIPC =>  -- U-type
             InstructionType <= U;
             forward_rs1(false);
@@ -189,5 +201,6 @@ begin
         forward_rd(false);
         Func <= BAD;
     end case;
+    end if;
 end process;
 end architecture Behavior; 

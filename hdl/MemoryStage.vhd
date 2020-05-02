@@ -72,7 +72,7 @@ begin
     MemRead    <= '1' when is_load(bFunc) else '0';
 
     -- Outputs to Write Back stage --
-    DataOut    <= MemDataIn when is_load(bFunc) and MemDelay = '0' else (others => '0');
+    DataOut    <= MemDataIn when is_load(bFunc) and MemDelay = '0' else bData;
     DestRegOut <= bDestReg when MemDelay = '0' else (others => '0');
     FuncOut    <= bFunc when MemDelay = '0' else NOP;
 

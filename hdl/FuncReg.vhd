@@ -6,7 +6,7 @@ use work.RV32I.all;
 entity FuncReg is
     port (
         D: in  RV32I_Op;
-        Q: out RV32I_Op;
+        Q: out RV32I_Op := NOP;
         Clock, Enable, Reset: in std_ulogic
     );
 end entity FuncReg;

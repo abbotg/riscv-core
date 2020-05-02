@@ -6,12 +6,12 @@ use work.RV32I.all;
 entity DecodeStage is
     port (
         -- Pipeline i/o --
-        Instruction, PC:    in  word_t;  -- From fetch
-        Func:               out RV32I_Op;
-        Left, Right, Extra: out word_t;
-        DestReg:            out regaddr_t;   -- dest reg address
-        Stall1, Stall2:     in  std_ulogic; -- stalls from reg tracker or memory stage
-        InstructionType:    out InsType;
+        Instruction, PC:      in  word_t;  -- From fetch
+        Func:                 out RV32I_Op;
+        Left, Right, Extra:   out word_t;
+        DestReg:              out regaddr_t;   -- dest reg address
+        Stall1, Stall2, Jump: in  std_ulogic; -- stalls from reg tracker or memory stage
+        InstructionType:      out InsType;
         -- Register tracker --
         RS1v, RS2v, RDv:    out std_ulogic; -- readA, readB, and reserve control lines
         RTWriteAddr:        out regaddr_t;
@@ -37,7 +37,7 @@ begin
             D      => Instruction,
             Q      => bInstruction,
             Enable => not Stall,
-            Reset  => '0',
+            Reset  => Jump,
             Clock  => Clock 
         );
     PCBuffer: entity work.Reg(Behavior)
@@ -46,7 +46,7 @@ begin
             D      => PC,
             Q      => bPC,
             Enable => not Stall,
-            Reset  => '0',
+            Reset  => Jump,
             Clock  => Clock 
         );
     Decoder: entity work.Decoder(Behavior)
@@ -77,13 +77,14 @@ begin
     if Stall then
         Func    <= NOP; -- Send NOP down pipeline 
         --RDv     <= '0'; -- De-asserted on stall so that the reg tracker increments the semaphore only once
-        DestReg <= (others => '0'); -- Simulate a NOP
-        Left    <= (others => '0');
+        DestReg <= (others => '0'); -- Simulate a NOP (ADDI x0,x0,0) (NOP should have no side-effects in execute stage
+        Left    <= (others => '0'); -- so this is technically pointless
         Right   <= (others => '0');
         Extra   <= (others => '0');
         -- RS1v, RS2v remain asserted so that the reg tracker will continue to stall until freed
     else
-        Func    <= iFunc; -- Forward normal intermediate values from decoder
+        -- Fwd normal intermediate values from decoder
+        Func    <= NOP when bInstruction = NOP_inst or bInstruction(1 downto 0) /= "11" else iFunc; 
         --RDv     <= iRDv;
         DestReg <= iDestReg;
         case InstructionType is
